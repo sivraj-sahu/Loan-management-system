@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://loan-management-system-klql.onrender.com/api",
+  baseURL: "https://lms-backend-new-n1kz.onrender.com",
 });
 
 API.interceptors.request.use((config) => {
