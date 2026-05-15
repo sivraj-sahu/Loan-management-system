@@ -33,10 +33,12 @@ export const signup = async (req: Request, res: Response) => {
         role: user.role,
       },
     });
-  } catch (error) {
-    res.status(500).json({
-      message: "Server Error",
-      error,
+  } catch (error: any) {
+      console.error(error);
+
+      res.status(500).json({
+        message: "Server Error",
+        error: error.message,
     });
   }
 };
@@ -85,10 +87,12 @@ export const login = async (req: Request, res: Response) => {
         role: user.role,
       },
     });
-  } catch (error) {
-    res.status(500).json({
-      message: "Server Error",
-      error,
+  } catch (error: any) {
+      console.error(error);
+
+      res.status(500).json({
+       message: "Server Error",
+       error: error.message,
     });
   }
 };
