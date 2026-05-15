@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
 
@@ -6,6 +7,15 @@ import testRoutes from "./routes/test.routes";
 import loanRoutes from "./routes/loan.routes";
 
 const app = express();
+
+mongoose
+  .connect(process.env.MONGO_URI!)
+  .then(() => {
+    console.log("MongoDB Connected");
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 app.use(cors());
 app.use(express.json());
