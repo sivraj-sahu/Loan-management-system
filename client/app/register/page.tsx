@@ -32,7 +32,7 @@ export default function RegisterPage() {
       setLoading(true);
 
       await API.post(
-        "/auth/signup",
+        "/api/auth/signup",
         {
           fullName,
           email,
