@@ -95,8 +95,7 @@ export default function LoginPage() {
             onChange={(e) =>
               setEmail(e.target.value)
             }
-            className="w-full mt-2 bg-zinc-800 border border-zinc-700 rounded-xl p-4 outline-none focus:border-zinc-500"
-            placeholder="Enter email"
+            className="w-full mt-2 bg-zinc-800 border border-zinc-700 rounded-xl p-4 text-white placeholder:text-zinc-400 outline-none focus:border-zinc-500"
           />
         </div>
 
@@ -113,8 +112,7 @@ export default function LoginPage() {
                 e.target.value
               )
             }
-            className="w-full mt-2 bg-zinc-800 border border-zinc-700 rounded-xl p-4 outline-none focus:border-zinc-500"
-            placeholder="Enter password"
+            className="w-full mt-2 bg-zinc-800 border border-zinc-700 rounded-xl p-4 text-white placeholder:text-zinc-400 outline-none focus:border-zinc-500"
           />
         </div>
 
