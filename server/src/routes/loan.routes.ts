@@ -10,7 +10,10 @@ import {
   getDisbursedLoans,
   collectPayment,
   getMyLoans,
+  getAllLoans,
 } from "../controllers/loan.controller";
+
+import upload from "../middleware/upload.middleware";
 
 import authMiddleware from "../middleware/auth.middleware";
 
@@ -19,10 +22,28 @@ import authorizeRoles from "../middleware/role.middleware";
 const router = express.Router();
 
 router.get(
+  "/",
+  authMiddleware,
+  authorizeRoles("ADMIN"),
+  getAllLoans
+);
+
+router.get(
   "/my-loans",
   authMiddleware,
   authorizeRoles("BORROWER"),
   getMyLoans
+);
+
+router.post(
+  "/upload",
+  upload.single("salarySlip"),
+  (req, res) => {
+    res.status(200).json({
+      message: "File uploaded",
+      file: req.file,
+    });
+  }
 );
 
 router.post(

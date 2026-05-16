@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { UserRole } from "../models/user.model";
 
 import User from "../models/user.model";
 
@@ -93,6 +94,27 @@ export const login = async (req: Request, res: Response) => {
       res.status(500).json({
        message: "Server Error",
        error: error.message,
+    });
+  }
+};
+
+export const getUsers = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const users = await User.find({
+      role: UserRole.BORROWER,
+    });
+
+    res.status(200).json(users);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Server Error",
     });
   }
 };

@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-   "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-   "build": "tsc",
-   "start": "node dist/app.js",
-   "seed": "ts-node-dev --respawn --transpile-only src/seed/seed.ts"
- },
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "seed": "ts-node-dev --respawn --transpile-only src/seed/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
