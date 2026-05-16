@@ -82,7 +82,10 @@ export const getAppliedLoans = async (
     try {
         const loans = await Loan.find({
             status: LoanStatus.APPLIED,
-        });
+        }).populate(
+            "borrower",
+            "fullName email"
+        );
 
         res.status(200).json({
             loans,
@@ -180,7 +183,10 @@ export const getSanctionedLoans = async (
     try {
         const loans = await Loan.find({
             status: LoanStatus.SANCTIONED,
-        });
+        }).populate(
+            "borrower",
+            "fullName email"
+        );
 
         res.status(200).json({
             loans,
@@ -240,8 +246,10 @@ export const getDisbursedLoans = async (
     try {
         const loans = await Loan.find({
             status: LoanStatus.DISBURSED,
-        });
-
+        }).populate(
+            "borrower",
+            "fullName email"
+        );
         res.status(200).json({
             loans,
         });
@@ -371,7 +379,11 @@ export const getAllLoans = async (
 
     try {
 
-        const loans = await Loan.find();
+        const loans = await Loan.find()
+            .populate(
+                "borrower",
+                "fullName email"
+            );
 
         res.status(200).json(loans);
 
