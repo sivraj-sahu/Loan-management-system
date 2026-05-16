@@ -14,239 +14,258 @@ import SalesLeads from "@/components/SalesLeads";
 
 export default function DashboardPage() {
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const [user, setUser] = useState<any>(
-        null
-    );
+  const [user, setUser] = useState<any>(
+    null
+  );
 
-    const [loans, setLoans] = useState<any[]>(
-        []
-    );
+  const [loans, setLoans] = useState<any[]>(
+    []
+  );
 
-    useEffect(() => {
+  useEffect(() => {
 
-        const storedUser =
-            localStorage.getItem("user");
+    const storedUser =
+      localStorage.getItem("user");
 
-        if (!storedUser) {
-            router.push("/login");
-            return;
-        }
+    if (!storedUser) {
+      router.push("/login");
+      return;
+    }
 
-        const parsedUser =
-            JSON.parse(storedUser);
+    const parsedUser =
+      JSON.parse(storedUser);
 
-        if (
-            parsedUser.role === "BORROWER"
-        ) {
-            router.push("/borrower");
-            return;
-        }
+    if (
+      parsedUser.role === "BORROWER"
+    ) {
+      router.push("/borrower");
+      return;
+    }
 
-        setUser(parsedUser);
+    setUser(parsedUser);
 
-    }, [router]);
+  }, [router]);
 
-    useEffect(() => {
+  useEffect(() => {
 
-        if (!user) return;
+    if (!user) return;
 
-        const fetchLoans = async () => {
+    const fetchLoans = async () => {
 
-            try {
+      try {
 
-                let endpoint = "";
+        let endpoint = "";
 
-                if (user.role === "SANCTION") {
-                    endpoint = "/loans/applied";
-                }
+        if (
+          user.role === "SANCTION"
+        ) {
+          endpoint = "/loans/applied";
+        }
 
-                if (user.role === "DISBURSEMENT") {
-                    endpoint = "/loans/sanctioned";
-                }
+        else if (
+          user.role ===
+          "DISBURSEMENT"
+        ) {
+          endpoint =
+            "/loans/sanctioned";
+        }
 
-                if (user.role === "COLLECTION") {
-                    endpoint = "/loans/disbursed";
-                }
+        else if (
+          user.role ===
+          "COLLECTION"
+        ) {
+          endpoint =
+            "/loans/disbursed";
+        }
 
-                if (user.role === "ADMIN") {
-                    endpoint = "/loans";
-                }
+        else if (
+          user.role === "ADMIN"
+        ) {
+          endpoint = "/loans";
+        }
 
-                if (!endpoint) return;
+        if (!endpoint) return;
 
-                const response =
-                    await API.get(endpoint);
+        const response =
+          await API.get(endpoint);
 
-                setLoans(response.data); setLoans(
-                    Array.isArray(response.data)
-                        ? response.data
-                        : []
-                );
+        setLoans(
+          Array.isArray(
+            response.data
+          )
+            ? response.data
+            : response.data.loans || []
+        );
 
-            } catch (error) {
-                console.error(error);
-            }
-        };
+      } catch (error) {
 
-        fetchLoans();
+        console.error(error);
+      }
+    };
 
-    }, [user]);
+    fetchLoans();
 
-    const handleAction = async (
-        loan: any
-    ) => {
+  }, [user]);
 
-        const loanId = loan._id;
+  const handleAction = async (
+    loan: any
+  ) => {
 
-        try {
+    const loanId = loan._id;
 
-            if (
-                user.role === "SANCTION"
-            ) {
+    try {
 
-                await API.put(
-                    `/loans/${loanId}/sanction`
-                );
-            }
+      if (
+        user.role === "SANCTION"
+      ) {
 
-            if (
-                user.role ===
-                "DISBURSEMENT"
-            ) {
+        await API.patch(
+          `/loans/${loanId}/sanction`
+        );
+      }
 
-                await API.put(
-                    `/loans/${loanId}/disburse`
-                );
-            }
+      if (
+        user.role ===
+        "DISBURSEMENT"
+      ) {
 
-            if (
-                user.role ===
-                "COLLECTION"
-            ) {
+        await API.patch(
+          `/loans/${loanId}/disburse`
+        );
+      }
 
-                await API.post(
-                    `/loans/${loanId}/payment`,
-                    {
-                        amount:
-                            loan.totalRepayment,
-                        utrNumber:
-                            "UTR" + Date.now(),
-                    }
-                );
-            }
+      if (
+        user.role ===
+        "COLLECTION"
+      ) {
 
-            toast.success(
-                "Action completed successfully"
-            );
+        await API.post(
+          `/loans/${loanId}/payment`,
+          {
+            amount:
+              loan.totalRepayment,
+            utrNumber:
+              "UTR" + Date.now(),
+          }
+        );
+      }
 
-            window.location.reload();
+      toast.success(
+        "Action completed successfully"
+      );
 
-        } catch (error: any) {
+      window.location.reload();
 
-            toast.error(
-                error.response?.data
-                    ?.message ||
-                "Action failed"
-            );
-        }
-    };
+    } catch (error: any) {
 
-    if (!user)
-        return (
-            <main className="min-h-screen bg-black text-white flex items-center justify-center">
-                Loading...
-            </main>
-        );
+      toast.error(
+        error.response?.data
+          ?.message ||
+          "Action failed"
+      );
+    }
+  };
 
-    return (
-        <main className="min-h-screen bg-black text-white p-8">
+  if (!user)
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        Loading...
+      </main>
+    );
 
-            <div className="max-w-7xl mx-auto">
+  return (
+    <main className="min-h-screen bg-black text-white p-8">
 
-                <Navbar
-                    title={`${user.role} Dashboard`}
-                />
+      <div className="max-w-7xl mx-auto">
 
-                {user.role === "SALES" && (
-                    <div className="mt-10">
-                        <SalesLeads />
-                    </div>
-                )}
+        <Navbar
+          title={`${user.role} Dashboard`}
+        />
 
-                {(user.role ===
-                    "SANCTION" ||
-                    user.role ===
-                    "DISBURSEMENT" ||
-                    user.role ===
-                    "COLLECTION" ||
-                    user.role === "ADMIN") && (
+        {user.role === "SALES" && (
+          <div className="mt-10">
+            <SalesLeads />
+          </div>
+        )}
 
-                        <div className="space-y-6 mt-10">
+        {(user.role ===
+          "SANCTION" ||
+          user.role ===
+            "DISBURSEMENT" ||
+          user.role ===
+            "COLLECTION" ||
+          user.role ===
+            "ADMIN") && (
 
-                            {loans.map((loan) => (
+          <div className="space-y-6 mt-10">
 
-                                <div
-                                    key={loan._id}
-                                    className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex items-center justify-between"
-                                >
+            {loans.map((loan) => (
 
-                                    <div>
+              <div
+                key={loan._id}
+                className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex items-center justify-between"
+              >
 
-                                        <h2 className="text-4xl font-bold mb-4">
-                                            ₹
-                                            {loan.totalRepayment}
-                                        </h2>
+                <div>
 
-                                        <div className="flex items-center gap-3">
+                  <h2 className="text-4xl font-bold mb-4">
+                    ₹
+                    {loan.totalRepayment}
+                  </h2>
 
-                                            <span className="text-zinc-400">
-                                                Status:
-                                            </span>
+                  <div className="flex items-center gap-3">
 
-                                            <span className="bg-green-900 text-green-400 px-4 py-2 rounded-full">
-                                                {loan.status}
-                                            </span>
+                    <span className="text-zinc-400">
+                      Status:
+                    </span>
 
-                                        </div>
-                                    </div>
+                    <span className="bg-green-900 text-green-400 px-4 py-2 rounded-full">
+                      {loan.status}
+                    </span>
 
-                                    <button
-                                        onClick={() =>
-                                            handleAction(
-                                                loan
-                                            )
-                                        }
-                                        className="bg-white text-black px-5 py-3 rounded-xl font-semibold"
-                                    >
+                  </div>
+                </div>
 
-                                        {(user.role ===
-                                            "SANCTION" ||
-                                            user.role ===
-                                            "ADMIN") &&
-                                            "Sanction Loan"}
+                {user.role !==
+                  "ADMIN" && (
 
-                                        {user.role ===
-                                            "DISBURSEMENT" &&
-                                            "Disburse Loan"}
+                  <button
+                    onClick={() =>
+                      handleAction(
+                        loan
+                      )
+                    }
+                    className="bg-white text-black px-5 py-3 rounded-xl font-semibold"
+                  >
 
-                                        {user.role ===
-                                            "COLLECTION" &&
-                                            "Collect Payment"}
+                    {user.role ===
+                      "SANCTION" &&
+                      "Sanction Loan"}
 
-                                    </button>
+                    {user.role ===
+                      "DISBURSEMENT" &&
+                      "Disburse Loan"}
 
-                                </div>
+                    {user.role ===
+                      "COLLECTION" &&
+                      "Collect Payment"}
 
-                            ))}
+                  </button>
 
-                        </div>
+                )}
 
-                    )}
+              </div>
 
-            </div>
+            ))}
 
-        </main>
-    );
+          </div>
+
+        )}
+
+      </div>
+
+    </main>
+  );
 }
